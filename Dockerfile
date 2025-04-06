@@ -31,4 +31,4 @@ COPY ./ /code
 # Command to run the application using uvicorn
 # Use 0.0.0.0 to listen on all network interfaces within the container
 # Use the PORT environment variable provided by Cloud Run
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

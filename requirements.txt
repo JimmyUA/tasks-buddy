@@ -4,5 +4,6 @@ google-cloud-firestore
 google-cloud-aiplatform >= 1.38.0 # Ensure version supports Gemini
 firebase-admin
 pydantic
+pydantic-settings
 python-dotenv
 google-auth # Often needed implicitly by google cloud libs
