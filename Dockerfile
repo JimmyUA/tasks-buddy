@@ -21,7 +21,7 @@ RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code into the container
-COPY ./app /code/app
+COPY ./ /code
 # Copy the .env file IF needed AND you understand the security implications
 # (Generally better to use Cloud Run secrets or env vars for production)
 # COPY ./.env /code/.env
