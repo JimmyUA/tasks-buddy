@@ -37,6 +37,7 @@ app = FastAPI(
 origins = [
     "http://localhost:5173", # Vite default dev server
     "http://localhost:3000", # Create React App default
+    "https://ai-tasks.glitch.me", # Create React App default
     # Add your Firebase Hosting URL (or custom domain) when deployed
     # "https://your-firebase-project-id.web.app",
     # "https://your-custom-domain.com",
