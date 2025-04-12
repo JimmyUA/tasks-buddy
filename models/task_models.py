@@ -18,6 +18,7 @@ class TaskRead(TaskBase):
     userId: str # Keep track of owner
     createdAt: datetime
     updatedAt: datetime
+    completed: bool # Added the missing completed field
 
 class TaskInDB(TaskBase):
     # Fields as stored in Firestore
