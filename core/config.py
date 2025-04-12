@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     high_priority_keywords: List[str] = os.getenv("HIGH_PRIORITY_KEYWORDS", "urgent,asap,important,deadline".split(","))
 
     # Gemini model name
-    gemini_model_name: str = "gemini-1.0-pro"  # Or another appropriate Gemini model
+    gemini_model_name: str = "gemini-2.0-flash-001"  # Or another appropriate Gemini model
 
     class Config:
         env_file = '.env'
