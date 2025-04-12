@@ -28,7 +28,8 @@ async def create_task(user_id: str, raw_input: str, processed_data: ProcessedTas
         tags=processed_data.tags or [],
         dueDateHint=processed_data.due_date_hint,
         createdAt=timestamp,
-        updatedAt=timestamp
+        updatedAt=timestamp,
+        completed=False
     )
 
     # Convert Pydantic model to dict for Firestore
@@ -83,3 +84,21 @@ async def get_tasks_for_user(user_id: str) -> List[TaskRead]:
     # --- End Sorting Logic ---
 
     return tasks
+
+async def update_task_completion(task_id: str, completed: bool) -> TaskRead:
+    """Updates the completion status of a task."""
+    if not db:
+        raise ConnectionError("Firestore client not initialized")
+
+    task_ref = db.collection(settings.tasks_collection).document(task_id)
+    try:
+        await task_ref.update({"completed": completed, "updatedAt": datetime.utcnow()})
+        updated_doc = await task_ref.get()
+        if updated_doc.exists:
+            task_data = updated_doc.to_dict()
+            return TaskRead(id=updated_doc.id, **task_data)
+        else:
+            raise ValueError(f"Task with ID {task_id} not found.")
+    except Exception as e:
+        print(f"Error updating task completion status: {e}")
+        raise

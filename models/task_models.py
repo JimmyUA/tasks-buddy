@@ -24,6 +24,7 @@ class TaskInDB(TaskBase):
     userId: str
     createdAt: datetime = Field(default_factory=datetime.utcnow)
     updatedAt: datetime = Field(default_factory=datetime.utcnow)
+    completed: bool = False
 
 # Model for data expected back from AI service
 class ProcessedTaskData(BaseModel):

@@ -1,8 +1,9 @@
 # app/api/v1/endpoints/tasks.py
 from fastapi import APIRouter, Depends, HTTPException, status
-from typing import List
-from models.task_models import TaskCreate, TaskRead
+from typing import List, Dict
+from models.task_models import TaskCreate, TaskRead, TaskInDB
 from services import ai_service, auth_service
+from google.cloud.firestore_v1.base_document import DocumentSnapshot
 from crud import task_crud
 from core.config import settings
 
@@ -68,3 +69,33 @@ async def read_user_tasks(
         print(f"Error reading tasks: {e}")
         # Log the full exception traceback here
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve tasks.")
+
+
+@router.put("/{task_id}/complete", response_model=TaskRead)
+async def update_task_completion(
+    task_id: str,
+    completed: Dict[str, bool],
+    current_user_id: str = Depends(auth_service.get_current_user)
+):
+    """
+    Updates the completion status of a specific task.
+    """
+    print(f"Updating completion status for task {task_id} to {completed} by user {current_user_id}")
+    try:
+        # Fetch the task to ensure it exists and belongs to the user
+        task_doc: DocumentSnapshot = await task_crud.get_task(task_id)
+        if not task_doc.exists:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found.")
+        task_data = task_doc.to_dict()
+        if task_data["userId"] != current_user_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have permission to modify this task.")
+
+        updated_task = await task_crud.update_task_completion(task_id=task_id, completed=completed.get("completed"))
+        print(f"Task {task_id} completion status updated to {completed.get("completed")}")
+        return updated_task
+    except ConnectionError as e:
+        print(f"Database connection error: {e}")
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Database service is unavailable.")
+    except Exception as e:
+        print(f"Error updating task completion: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update task completion status.")
