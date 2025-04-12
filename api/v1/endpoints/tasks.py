@@ -91,7 +91,8 @@ async def update_task_completion(
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have permission to modify this task.")
 
         updated_task = await task_crud.update_task_completion(task_id=task_id, completed=completed.get("completed"))
-        print(f"Task {task_id} completion status updated to {completed.get("completed")}")
+        # Corrected line 94:
+        print(f"Task {task_id} completion status updated to {completed.get('completed')}")
         return updated_task
     except ConnectionError as e:
         print(f"Database connection error: {e}")
